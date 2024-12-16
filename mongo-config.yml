@@ -3,4 +3,4 @@ kind: ConfigMap
 metadata:
   name: mongo-config
 data:
-  mongo-url: service-mongo
+  mongo-url: my-mongodb.default.svc.cluster.local
