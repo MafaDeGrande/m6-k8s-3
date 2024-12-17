@@ -1,10 +1,23 @@
 architecture: "standalone"
 
-auth:
-  auth.enable: true
-  auth.rootUser: test
-  existingSecret: mongo-auth
+global:
+  security:
+    allowInsecureImages: true
 
+extraEnvVars:
+  - name: MONGO_INITDB_ROOT_USERNAME
+    valueFrom:
+      secretKeyRef:
+        name: mongo-secret
+        key: mongo-user  
+  - name: MONGO_INITDB_ROOT_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: mongo-secret
+        key: mongo-password
 image:
-  repository: mongo
-  tag: 8.0.4
+  repository: arm64v8/mongo
+  tag: latest
+
+persistence:
+  mountPath: "/data/db"
