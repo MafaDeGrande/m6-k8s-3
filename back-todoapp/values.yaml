@@ -1,0 +1,30 @@
+# Default values for back-todoapp.
+# This is a YAML-formatted file.
+
+replicaCount: 2
+name: deployment-back 
+
+image:
+  repository: mafadegrande/backgoapp
+  tag: dev
+  port: 8080
+
+pdb:
+  minAvailable: 2
+
+probe:
+  httpGet: "/api/task"
+
+resources:
+  limits:
+    cpu: 700m
+    memory: 256Mi
+  requests:
+    cpu: 200m
+    memory: 128Mi
+
+mongo:
+  mongoUrl: "mongodb.default.svc.cluster.local"
+  secretName: mongo-secret
+  userKey: mongo-user
+  passwordKey: mongo-password
