@@ -2,12 +2,16 @@
 # This is a YAML-formatted file.
 
 replicaCount: 2
-name: deployment-front 
 
 image:
   repository: mafadegrande/frontgoapp
   tag: dev
   port: 3000
+
+ingress:
+  ingressClassName: nginx
+  http:
+    path: "/"
 
 pdb:
   minAvailable: 2

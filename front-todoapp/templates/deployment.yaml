@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.name }}
+  name: "{{ .Release.Name }}-todo-app"
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: front
+      app: "{{ .Release.Name }}"
   template:
     metadata:
       labels:
-        app: front
+        app: "{{ .Release.Name }}"
     spec: 
       affinity:
         podAntiAffinity:
@@ -22,7 +22,7 @@ spec:
                   - key: app
                     operator: In
                     values:
-                      - front
+                      - "{{ .Release.Name }}"
                 topologyKey: "kubernetes.io/hostname"
       containers:
         - name: front-app

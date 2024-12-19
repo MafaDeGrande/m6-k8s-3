@@ -1,14 +1,14 @@
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: todoapp-scale
+  name: "{{ .Release.Name }}-scale"
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
     name: deployment-back
-  minReplicas: 2
-  maxReplicas: 5
+  minReplicas: {{ .Values.hpa.minReplicas }}
+  maxReplicas: {{ .Values.hpa.maxReplicas }}
   behavior:
     scaleUp:
       policies:

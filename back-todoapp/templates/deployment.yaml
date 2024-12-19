@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.name }}
+  name: "{{ .Release.Name }}-todo-app"
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: back
+      app: "{{ .Release.Name }}"
   template:
     metadata:
       labels:
-        app: back
+        app: "{{ .Release.Name }}"
     spec: 
       affinity:
         podAntiAffinity:
@@ -22,10 +22,10 @@ spec:
                   - key: app
                     operator: In
                     values:
-                      - back
+                      - "{{ .Release.Name }}"
                 topologyKey: "kubernetes.io/hostname"
       containers:
-        - name: back-app
+        - name: "{{ .Release.Name }}-app"
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           ports:
             - containerPort: {{ .Values.image.port }}
@@ -53,7 +53,7 @@ spec:
             - name: DB_URL
               valueFrom:
                 configMapKeyRef:
-                  name: mongo-config
+                  name: "{{ .Release.Name }}-config-map"
                   key: mongo-url
             - name: DB_URI
               value: mongodb://$(DB_USER):$(DB_PASSWORD)@$(DB_URL)
