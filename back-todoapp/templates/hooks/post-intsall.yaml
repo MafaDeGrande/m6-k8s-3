@@ -1,0 +1,32 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "{{ .Release.Name }}-post-install-hook"
+  labels:
+    app: {{ .Release.Name }}
+    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+  annotations:
+    "helm.sh/hook": post-install
+    "helm.sh/hook-weight": "0"
+    "helm.sh/hook-delete-policy": hook-succeeded
+spec:
+  template:
+    metadata:
+      name: "{{ .Release.Name }}-post-install-hook"
+      labels:
+        app: {{ .Release.Name }}
+        helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: post-install
+          image: alpine/curl:latest 
+          command: ["/bin/sh", "-c"]
+          args:
+            [
+              "echo 'Creating initial tasks for the to-do app'; \
+              curl -X POST -d '{\"task\": \"Welcome to your to-do list!\", \"completed\": false}' \
+              http://{{ .Release.Name }}-service:8080/api/task; \
+              curl -X POST -d '{\"task\": \"Start adding your own tasks!\", \"completed\": false}' \
+              http://{{ .Release.Name }}-service:8080/api/task;",
+            ]

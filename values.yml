@@ -15,9 +15,25 @@ extraEnvVars:
       secretKeyRef:
         name: mongo-secret
         key: mongo-password
+
+auth:
+  enabled: true
+  rootUser: test
+
 image:
   repository: arm64v8/mongo
   tag: latest
 
 persistence:
   mountPath: "/data/db"
+
+backup:
+  enabled: true
+  cronjob:
+    schedule: "45 17 * * *"
+    timeZone: "UTC"
+    restartPolicy: "OnFailure"
+    bakcoffLimit: 6
+  storage: 
+    existingClaim: "mongodb"
+    mountPath: "/backup/mongodb"
