@@ -30,7 +30,7 @@ persistence:
 backup:
   enabled: true
   cronjob:
-    schedule: "45 17 * * *"
+    schedule: "24 18 * * *"
     timeZone: "UTC"
     restartPolicy: "OnFailure"
     bakcoffLimit: 6
