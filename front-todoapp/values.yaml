@@ -1,0 +1,24 @@
+# Default values for front-todoapp.
+# This is a YAML-formatted file.
+
+replicaCount: 2
+
+image:
+  repository: mafadegrande/frontgoapp
+  tag: dev
+  port: 3000
+
+ingress:
+  ingressClassName: nginx
+  http:
+    path: "/"
+
+pdb:
+  minAvailable: 2
+
+probe:
+  httpGet: "/"
+
+
+service:
+  port: 80

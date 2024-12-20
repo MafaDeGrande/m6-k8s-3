@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ .Release.Name }}-todo-app"
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: "{{ .Release.Name }}"
+  template:
+    metadata:
+      labels:
+        app: "{{ .Release.Name }}"
+    spec: 
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                      - "{{ .Release.Name }}"
+                topologyKey: "kubernetes.io/hostname"
+      containers:
+        - name: "{{ .Release.Name }}-app"
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          ports:
+            - containerPort: {{ .Values.image.port }}
+          env:
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.mongo.secretName }}
+                  key: {{ .Values.mongo.userKey }} 
+            - name: DB_COLLECTION_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.mongo.secretName }}
+                  key: {{ .Values.mongo.userKey }}
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.mongo.secretName }}
+                  key: {{ .Values.mongo.userKey }}
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.mongo.secretName }}
+                  key: {{ .Values.mongo.passwordKey }}
+            - name: DB_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ .Release.Name }}-config-map"
+                  key: mongo-url
+            - name: DB_URI
+              value: mongodb://$(DB_USER):$(DB_PASSWORD)@$(DB_URL)
+          resources:
+            limits:
+              cpu: {{ .Values.resources.limits.cpu }}
+              memory: {{ .Values.resources.limits.memory }}
+            requests:
+              cpu: {{ .Values.resources.requests.cpu }}
+              memory: {{ .Values.resources.requests.memory }}
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.probe.httpGet }}
+              port: {{ .Values.image.port }}
+            initialDelaySeconds: 3
+            periodSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.probe.httpGet }}
+              port: {{ .Values.image.port }}
+            initialDelaySeconds: 3
+            periodSeconds: 5
+
