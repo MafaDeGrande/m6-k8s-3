@@ -36,7 +36,7 @@ resources:
 
 mongo:
   mongoName: "mongo-config"
-  mongoUrl: "mongodb.default.svc.cluster.local"
+  mongoUrl: mongodb
   secretName: mongo-secret
   userKey: mongo-user
   passwordKey: mongo-password
